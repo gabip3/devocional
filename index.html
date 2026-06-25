@@ -486,11 +486,35 @@ function tapWord(i){
 }
 
 // ===== PLAYER =====
-let playing=false,litIdx=-1,utterance=null;
+let playing=false,litIdx=-1,utterance=null,timerIv=null;
+
+function highlightWord(i){
+  if(i===litIdx) return;
+  spans.forEach(s=>{s.style.background='';s.style.color='';});
+  litIdx=i;
+  if(spans[i]){ spans[i].style.background='#2E2519'; spans[i].style.color='#F8F4EE'; }
+  const pct=Math.round((i/(words.length-1))*100);
+  document.getElementById('pfill').style.width=pct+'%';
+  document.getElementById('ct').textContent='0:'+String(Math.round((i/(words.length-1))*62)).padStart(2,'0');
+}
+
+function startTimerFallback(){
+  // cada palavra coreana leva ~0.55s a rate 0.85
+  const msPerWord = 550;
+  let idx=0;
+  timerIv=setInterval(()=>{
+    if(idx>=words.length){ clearInterval(timerIv); return; }
+    highlightWord(idx);
+    idx++;
+  }, msPerWord);
+}
+
 function togglePlay(){
   const ico=document.getElementById('playIcon');
   if(playing){
-    speechSynthesis.cancel(); playing=false;
+    speechSynthesis.cancel();
+    clearInterval(timerIv);
+    playing=false;
     ico.innerHTML='<polygon points="5 3 19 12 5 21 5 3"></polygon>';
     spans.forEach(s=>{s.style.background='';s.style.color='';});
     litIdx=-1; return;
@@ -501,27 +525,40 @@ function togglePlay(){
   const v=speechSynthesis.getVoices().find(v=>v.lang==='ko-KR'||v.lang==='ko_KR');
   if(v) utterance.voice=v;
   playing=true;
+  litIdx=-1;
   ico.innerHTML='<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+
+  let boundaryFired=false;
   utterance.onboundary=(e)=>{
     if(e.name!=='word') return;
+    boundaryFired=true;
+    clearInterval(timerIv); // onboundary funciona, cancela fallback
     let acc=0;
     for(let i=0;i<words.length;i++){
-      if(e.charIndex<=acc+words[i].ko.length){
-        if(i!==litIdx){
-          spans.forEach(s=>{s.style.background='';s.style.color='';});
-          litIdx=i; spans[i].style.background='#2E2519'; spans[i].style.color='#F8F4EE';
-          const pct=Math.round((i/(words.length-1))*100);
-          document.getElementById('pfill').style.width=pct+'%';
-          document.getElementById('ct').textContent='0:'+String(Math.round((i/(words.length-1))*62)).padStart(2,'0');
-        } break;
-      }
+      if(e.charIndex<=acc+words[i].ko.length){ highlightWord(i); break; }
       acc+=words[i].ko.length+1;
     }
   };
-  utterance.onend=()=>{ playing=false; ico.innerHTML='<polygon points="5 3 19 12 5 21 5 3"></polygon>'; spans.forEach(s=>{s.style.background='';s.style.color='';});litIdx=-1; };
+
+  utterance.onstart=()=>{
+    // aguarda 300ms — se onboundary não disparar, usa fallback por timer
+    setTimeout(()=>{ if(!boundaryFired) startTimerFallback(); }, 300);
+  };
+
+  utterance.onend=()=>{
+    clearInterval(timerIv);
+    playing=false;
+    ico.innerHTML='<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+    spans.forEach(s=>{s.style.background='';s.style.color='';});
+    litIdx=-1;
+    document.getElementById('pfill').style.width='0%';
+    document.getElementById('ct').textContent='0:00';
+  };
+
   speechSynthesis.speak(utterance);
 }
 speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+
 
 // ===== HEART =====
 function toggleHeart(){
