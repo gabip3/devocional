@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>매일 — Plus</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&family=Noto+Sans+KR:wght@300;400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root{
+  --paper:#F8F4EE;
+  --paper2:#EDE6D6;
+  --gold:#C9B99A;
+  --ink:#2E2519;
+  --ink2:#7A6E5A;
+  --ink3:#B0A08A;
+  --terra:#A85C3E;
+}
+
+html, body {
+  background:#E8E2D8;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.phone{
+  width:100%;max-width:390px;
+  margin:24px auto;
+  background:var(--paper);
+  min-height:800px;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  position:relative;
+  border-radius: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+}
+
+/* foto topo */
+.photo-zone{
+  width:100%;height:220px;
+  position:relative;overflow:hidden;flex-shrink:0;
+}
+.photo-zone svg{width:100%;height:100%;display:block;}
+.sbar{
+  position:absolute;top:0;left:0;right:0;
+  padding:14px 24px 0;
+  display:flex;justify-content:space-between;
+  font-size:11px;color:rgba(255,255,255,0.9);font-weight:300;z-index:2;
+}
+.close-btn{
+  position:absolute;top:14px;right:20px;z-index:3;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(0,0,0,0.15);
+  border:none;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.close-btn svg{width:13px;height:13px;color:white;}
+
+.content{
+  flex:1;display:flex;flex-direction:column;
+  padding:0 28px;
+}
+
+/* badge plus */
+.plus-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--ink);color:var(--paper);
+  padding:5px 14px;border-radius:20px;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:10px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;
+  margin:20px auto 0;
+}
+.plus-badge svg{width:11px;height:11px;}
+
+.headline{
+  font-family:'Dongle',sans-serif;
+  font-size:36px;font-weight:700;color:var(--ink);
+  text-align:center;margin-top:10px;line-height:1.15;
+}
+
+.subline{
+  font-family:'Cormorant Garamond',serif;
+  font-size:15px;font-weight:600;font-style:italic;
+  color:var(--ink2);text-align:center;
+  margin-top:8px;line-height:1.4;
+}
+
+.divider{
+  width:24px;height:1px;background:var(--gold);
+  margin:18px auto;
+}
+
+/* lista de benefícios */
+.benefits{
+  display:flex;flex-direction:column;gap:14px;
+  margin:0 4px;
+}
+
+.benefit{
+  display:flex;align-items:flex-start;gap:12px;
+}
+.benefit-icon{
+  width:32px;height:32px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+.benefit-icon svg{width:15px;height:15px;}
+.benefit-text{}
+.benefit-title{
+  font-family:'Dongle',sans-serif;
+  font-size:18px;font-weight:700;color:var(--ink);
+  line-height:1.1;
+}
+.benefit-desc{
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:11px;font-weight:300;color:var(--ink2);
+  margin-top:2px;line-height:1.4;
+}
+
+/* preço e botão */
+.price-area{
+  margin-top:auto;padding:20px 0 32px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+
+.price-tag{
+  text-align:center;
+}
+.price-main{
+  font-family:'Dongle',sans-serif;
+  font-size:42px;font-weight:700;color:var(--ink);
+  line-height:1;
+}
+.price-desc{
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:11px;color:var(--ink3);font-weight:300;
+  margin-top:4px;letter-spacing:0.3px;
+}
+
+.cta-btn{
+  width:100%;
+  background:var(--ink);
+  color:var(--paper);
+  border:none;border-radius:30px;
+  padding:17px;
+  font-family:'Dongle',sans-serif;
+  font-size:22px;font-weight:700;
+  cursor:pointer;
+  transition:opacity 0.15s;
+  letter-spacing:0.3px;
+}
+.cta-btn:hover{opacity:0.85;}
+
+.skip{
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:11px;color:var(--ink3);
+  cursor:pointer;letter-spacing:0.3px;
+  background:none;border:none;
+}
+
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- foto topo -->
+  <div class="photo-zone">
+    <svg viewBox="0 0 390 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#D6C9B4"/>
+          <stop offset="100%" stop-color="#E8DDD0"/>
+        </linearGradient>
+        <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#F8F4EE" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#F8F4EE" stop-opacity="1"/>
+        </linearGradient>
+        <linearGradient id="glow" x1="0.5" y1="0" x2="0.5" y2="1">
+          <stop offset="0%" stop-color="#FBF4E4" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#F8F4EE" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <rect width="390" height="220" fill="url(#sky)"/>
+      <ellipse cx="195" cy="80" rx="80" ry="80" fill="#FBF4E4" opacity="0.5"/>
+      <rect x="0" y="0" width="390" height="220" fill="url(#glow)" opacity="0.7"/>
+      <!-- folhas -->
+      <g opacity="0.45">
+        <path d="M340 0 Q330 30 335 65" stroke="#7A9A6A" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <path d="M335 12 Q318 6 312 18 Q322 26 335 12Z" fill="#7A9A6A"/>
+        <path d="M336 30 Q350 22 354 34 Q342 42 336 30Z" fill="#6B8A55"/>
+        <path d="M334 50 Q316 42 310 54 Q324 62 334 50Z" fill="#7A9A6A"/>
+      </g>
+      <g opacity="0.4">
+        <path d="M50 0 Q56 28 52 55" stroke="#7A9A6A" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        <path d="M52 14 Q38 8 34 20 Q44 28 52 14Z" fill="#6B8A55"/>
+        <path d="M51 36 Q64 28 68 40 Q56 48 51 36Z" fill="#7A9A6A"/>
+      </g>
+      <!-- pétalas sakura -->
+      <g opacity="0.4">
+        <g transform="translate(195,100)">
+          <ellipse cx="0" cy="-6" rx="5" ry="7" fill="#E8A8BE"/>
+          <ellipse cx="5.7" cy="-1.8" rx="5" ry="7" fill="#E8A8BE" transform="rotate(72)"/>
+          <ellipse cx="3.5" cy="5.5" rx="5" ry="7" fill="#E8A8BE" transform="rotate(144)"/>
+          <ellipse cx="-3.5" cy="5.5" rx="5" ry="7" fill="#E8A8BE" transform="rotate(216)"/>
+          <ellipse cx="-5.7" cy="-1.8" rx="5" ry="7" fill="#E8A8BE" transform="rotate(288)"/>
+          <circle cx="0" cy="0" r="2.5" fill="#D88FA8"/>
+        </g>
+        <circle cx="240" cy="50" r="3.5" fill="#E8A8BE"/>
+        <circle cx="155" cy="60" r="2.5" fill="#E8A8BE"/>
+        <circle cx="270" cy="90" r="2" fill="#E8A8BE"/>
+        <circle cx="130" cy="90" r="3" fill="#E8A8BE"/>
+      </g>
+      <rect x="0" y="0" width="390" height="220" fill="url(#fade)"/>
+    </svg>
+
+    <div class="sbar">
+      <span>9:41</span>
+      <div style="display:flex;gap:6px;align-items:center">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>
+      </div>
+    </div>
+
+    <button class="close-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div class="content">
+
+    <div class="plus-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      매일 Plus
+    </div>
+
+    <div class="headline">Vá mais fundo<br>na Palavra</div>
+
+    <div class="subline">Uma vez só. Para sempre.</div>
+
+    <div class="divider"></div>
+
+    <div class="benefits">
+
+      <div class="benefit">
+        <div class="benefit-icon" style="background:#D9E4D3;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3E5232" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="benefit-text">
+          <div class="benefit-title">Biblioteca completa</div>
+          <div class="benefit-desc">Todos os versículos de todas as categorias — Paz, Ansiedade, Gratidão, Família e Oppa ♡</div>
+        </div>
+      </div>
+
+      <div class="benefit">
+        <div class="benefit-icon" style="background:#F2E4C4;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7A5E26" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </div>
+        <div class="benefit-text">
+          <div class="benefit-title">Cards exclusivos</div>
+          <div class="benefit-desc">Templates premium de compartilhamento para Instagram e WhatsApp</div>
+        </div>
+      </div>
+
+      <div class="benefit">
+        <div class="benefit-icon" style="background:#F2DCE2;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8A3F52" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </div>
+        <div class="benefit-text">
+          <div class="benefit-title">Áudio em todas as telas</div>
+          <div class="benefit-desc">Ouça qualquer versículo em coreano, não só o do dia</div>
+        </div>
+      </div>
+
+      <div class="benefit">
+        <div class="benefit-icon" style="background:#D6E2E8;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3E5F6B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="benefit-text">
+          <div class="benefit-title">Guardar favoritos ilimitados</div>
+          <div class="benefit-desc">Crie sua coleção pessoal de versículos sem limite</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="price-area">
+      <div class="price-tag">
+        <div class="price-main">R$ 19,90</div>
+        <div class="price-desc">pagamento único · acesso vitalício · sem assinatura</div>
+      </div>
+
+      <button class="cta-btn">Quero o Plus</button>
+
+      <button class="skip">continuar com a versão gratuita</button>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

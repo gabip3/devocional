@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>매일 — Compartilhar</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&family=Noto+Sans+KR:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root{
+  --paper:#F8F4EE;
+  --paper2:#EDE6D6;
+  --gold:#C9B99A;
+  --ink:#2E2519;
+  --ink2:#7A6E5A;
+  --ink3:#B0A08A;
+}
+
+html, body {
+  background:#E8E2D8;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.phone{
+  width:100%;max-width:390px;
+  margin:24px auto;
+  background:var(--paper);
+  min-height:800px;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  position:relative;
+  border-radius: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+}
+
+.sbar{
+  padding:18px 28px 0;
+  display:flex;justify-content:space-between;
+  font-size:11px;color:var(--ink3);font-weight:300;
+}
+
+.hdr{
+  padding:16px 28px 0;
+  display:flex;align-items:center;gap:14px;
+}
+.back-btn{
+  width:32px;height:32px;border-radius:50%;
+  border:0.5px solid var(--paper2);background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.back-btn svg{width:15px;height:15px;color:var(--ink2);}
+.hdr h1{
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:20px;font-weight:300;color:var(--ink);
+}
+
+/* format toggle */
+.format-toggle{
+  display:flex;gap:8px;
+  padding:18px 28px 0;
+}
+.fmt-btn{
+  flex:1;padding:9px 0;border-radius:20px;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:12px;font-weight:300;
+  cursor:pointer;text-align:center;
+  border:0.5px solid var(--paper2);
+  background:transparent;color:var(--ink2);
+  transition:all 0.15s;
+}
+.fmt-btn.on{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+/* theme picker */
+.theme-label{
+  padding:18px 28px 10px;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:9px;color:var(--ink3);
+  letter-spacing:1.6px;text-transform:uppercase;
+}
+.theme-row{
+  display:flex;gap:8px;
+  padding:0 28px;
+  overflow-x:auto;scrollbar-width:none;
+}
+.theme-row::-webkit-scrollbar{display:none;}
+.theme-dot{
+  width:28px;height:28px;border-radius:50%;
+  cursor:pointer;flex-shrink:0;
+  border:2px solid transparent;
+  transition:border-color 0.15s;
+}
+.theme-dot.on{border-color:var(--ink);}
+
+/* card preview */
+.preview-wrap{
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px 28px;
+}
+
+.card-preview{
+  position:relative;
+  overflow:hidden;
+  border-radius:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  transition:all 0.25s;
+}
+
+/* 4:5 feed */
+.card-preview.feed{width:240px;height:300px;}
+/* 9:16 stories */
+.card-preview.stories{width:169px;height:300px;}
+
+.card-preview svg.bg{
+  position:absolute;inset:0;width:100%;height:100%;
+}
+
+.card-content{
+  position:relative;z-index:2;
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:24px 20px;text-align:center;
+}
+
+.c-ko{
+  font-family:'Dongle',sans-serif;
+  font-weight:400;line-height:1.15;
+}
+.card-preview.feed .c-ko{font-size:17px;}
+.card-preview.stories .c-ko{font-size:14px;}
+
+.c-div{width:18px;height:1px;margin:12px auto;}
+
+.c-pt{
+  font-family:'Cormorant Garamond',serif;
+  font-weight:300;font-style:italic;line-height:1.55;
+}
+.card-preview.feed .c-pt{font-size:11px;}
+.card-preview.stories .c-pt{font-size:10px;}
+
+.c-ref{
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:8.5px;letter-spacing:0.5px;text-transform:uppercase;
+  margin-top:10px;
+}
+.c-brand{
+  position:absolute;bottom:12px;right:14px;
+  font-family:'Dongle',sans-serif;font-size:11px;font-weight:700;
+  z-index:3;opacity:0.65;
+}
+
+/* share buttons */
+.share-section{
+  padding:0 28px 32px;
+}
+.share-label{
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:9px;color:var(--ink3);
+  letter-spacing:1.6px;text-transform:uppercase;
+  margin-bottom:14px;text-align:center;
+}
+.share-btns{
+  display:flex;gap:12px;justify-content:center;
+}
+.share-btn{
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  cursor:pointer;background:none;border:none;
+}
+.share-icon{
+  width:52px;height:52px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+}
+.share-icon svg{width:26px;height:26px;}
+.share-btn span{
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:10px;color:var(--ink2);
+}
+
+.btn-whatsapp .share-icon{background:#E8F5E0;}
+.btn-insta .share-icon{background:linear-gradient(135deg,#FDEBD4,#F5D0E0,#DCE4F5);}
+.btn-stories .share-icon{background:linear-gradient(135deg,#E8DAEF,#D5E8F5);}
+.btn-save .share-icon{background:var(--paper2);}
+
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <div class="sbar">
+    <span>9:41</span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B0A08A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B0A08A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>
+    </div>
+  </div>
+
+  <div class="hdr">
+    <button class="back-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h1>Compartilhar</h1>
+  </div>
+
+  <!-- formato -->
+  <div class="format-toggle">
+    <button class="fmt-btn on" onclick="setFormat('feed',this)">Feed 4:5</button>
+    <button class="fmt-btn" onclick="setFormat('stories',this)">Stories 9:16</button>
+  </div>
+
+  <!-- tema -->
+  <div class="theme-label">Escolha o tema visual</div>
+  <div class="theme-row" id="themeRow"></div>
+
+  <!-- prévia do card -->
+  <div class="preview-wrap">
+    <div class="card-preview feed" id="cardPreview">
+      <svg class="bg" id="cardBg" viewBox="0 0 300 375" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"></svg>
+      <div class="card-content">
+        <div class="c-ko" id="cKo"></div>
+        <div class="c-div" id="cDiv"></div>
+        <div class="c-pt" id="cPt"></div>
+        <div class="c-ref" id="cRef"></div>
+      </div>
+      <div class="c-brand" id="cBrand">매일</div>
+    </div>
+  </div>
+
+  <!-- botões de compartilhar -->
+  <div class="share-section">
+    <div class="share-label">compartilhar via</div>
+    <div class="share-btns">
+
+      <button class="share-btn btn-whatsapp" onclick="shareWpp()">
+        <div class="share-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.99L0 24l6.18-1.62A11.94 11.94 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.22-3.48-8.52z" fill="#4CAF50" opacity="0.15"/>
+            <path d="M17.47 14.38c-.28-.14-1.65-.81-1.9-.9-.26-.1-.44-.14-.63.14-.19.28-.73.9-.9 1.08-.16.19-.33.21-.61.07-.28-.14-1.18-.44-2.25-1.39-.83-.74-1.39-1.66-1.55-1.94-.16-.28-.02-.43.12-.57.13-.13.28-.33.42-.5.14-.17.19-.28.28-.47.1-.19.05-.36-.02-.5-.07-.14-.63-1.52-.86-2.08-.23-.54-.46-.47-.63-.48-.16 0-.35-.02-.54-.02-.19 0-.5.07-.76.36-.26.28-1 1-1 2.44s1.03 2.83 1.17 3.03c.14.19 2.02 3.08 4.9 4.32.69.3 1.22.47 1.64.6.69.22 1.31.19 1.81.12.55-.08 1.65-.67 1.89-1.33.23-.65.23-1.21.16-1.33-.07-.12-.26-.19-.54-.33z" fill="#4CAF50"/>
+          </svg>
+        </div>
+        <span>WhatsApp</span>
+      </button>
+
+      <button class="share-btn btn-insta" onclick="shareInsta()">
+        <div class="share-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="20" height="20" rx="5" fill="url(#ig-grad)" opacity="0.9"/>
+            <defs>
+              <linearGradient id="ig-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#F9A825"/>
+                <stop offset="50%" stop-color="#E91E8C"/>
+                <stop offset="100%" stop-color="#5C6BC0"/>
+              </linearGradient>
+            </defs>
+            <rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="white" stroke-width="0.5" opacity="0.3"/>
+            <circle cx="12" cy="12" r="4" fill="none" stroke="white" stroke-width="1.5"/>
+            <circle cx="17" cy="7" r="1.2" fill="white"/>
+          </svg>
+        </div>
+        <span>Instagram</span>
+      </button>
+
+      <button class="share-btn btn-stories" onclick="shareStories()">
+        <div class="share-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="2" width="12" height="20" rx="3" fill="none" stroke="#7A6E5A" stroke-width="1.6"/>
+            <line x1="9" y1="6" x2="15" y2="6" stroke="#7A6E5A" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="9" y1="9" x2="15" y2="9" stroke="#7A6E5A" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="9" y1="12" x2="13" y2="12" stroke="#7A6E5A" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span>Stories</span>
+      </button>
+
+      <button class="share-btn btn-save" onclick="saveCard()">
+        <div class="share-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7A6E5A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+        <span>Salvar</span>
+      </button>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+const themes = [
+  {
+    id:'paz', color:'#C9D8BE', textColor:'#3E5232', divColor:'#7E9A6E', refColor:'#7E9A6E', brandColor:'#3E5232',
+    ko:'평안을 너희에게\n끼치노니', pt:'Deixo-vos a paz,\na minha paz vos dou.', ref:'João 14:27',
+    bg:(w,h)=>`
+      <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#E8EEE3"/>
+        <stop offset="100%" stop-color="#C9D8BE"/>
+      </linearGradient></defs>
+      <rect width="${w}" height="${h}" fill="url(#bg)"/>
+      <g opacity="0.35">
+        <path d="M30 40 Q50 70 35 100" stroke="#6B8A55" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <ellipse cx="38" cy="52" rx="11" ry="6" fill="#6B8A55" transform="rotate(-25 38 52)"/>
+        <ellipse cx="30" cy="78" rx="10" ry="5.5" fill="#5C7A4A" transform="rotate(20 30 78)"/>
+      </g>
+      <g opacity="0.3">
+        <path d="M${w-30} ${h-80} Q${w-50} ${h-50} ${w-35} ${h-20}" stroke="#6B8A55" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <ellipse cx="${w-38}" cy="${h-68}" rx="11" ry="6" fill="#5C7A4A" transform="rotate(25 ${w-38} ${h-68})"/>
+      </g>`
+  },
+  {
+    id:'ansiedade', color:'#C2D4DC', textColor:'#2E454D', divColor:'#6E97A6', refColor:'#6E97A6', brandColor:'#2E454D',
+    ko:'아무것도 염려하지\n말고 기도와 간구로', pt:'Não andeis ansiosos;\nem tudo, orai a Deus.', ref:'Filipenses 4:6',
+    bg:(w,h)=>`
+      <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#E4ECEF"/>
+        <stop offset="100%" stop-color="#C2D4DC"/>
+      </linearGradient></defs>
+      <rect width="${w}" height="${h}" fill="url(#bg)"/>
+      <circle cx="28" cy="42" r="5" fill="#FFFFFF" opacity="0.55"/>
+      <circle cx="72" cy="18" r="3.5" fill="#FFFFFF" opacity="0.4"/>
+      <circle cx="${w*0.4}" cy="55" r="2.5" fill="#FFFFFF" opacity="0.35"/>
+      <circle cx="${w*0.6}" cy="24" r="4" fill="#FFFFFF" opacity="0.45"/>
+      <circle cx="${w*0.8}" cy="50" r="3" fill="#FFFFFF" opacity="0.38"/>
+      <circle cx="${w-20}" cy="15" r="5.5" fill="#FFFFFF" opacity="0.5"/>
+      <circle cx="50" cy="${h*0.3}" r="2.5" fill="#FFFFFF" opacity="0.3"/>
+      <circle cx="${w*0.3}" cy="${h*0.37}" r="4.5" fill="#FFFFFF" opacity="0.42"/>
+      <circle cx="${w*0.7}" cy="${h*0.62}" r="3" fill="#FFFFFF" opacity="0.32"/>
+      <circle cx="${w*0.85}" cy="${h*0.7}" r="5" fill="#FFFFFF" opacity="0.48"/>
+      <circle cx="${w-18}" cy="${h*0.75}" r="2.5" fill="#FFFFFF" opacity="0.35"/>
+      <circle cx="20" cy="${h*0.88}" r="3.5" fill="#FFFFFF" opacity="0.3"/>
+      <circle cx="${w*0.55}" cy="${h*0.9}" r="5" fill="#FFFFFF" opacity="0.42"/>
+      <circle cx="${w*0.75}" cy="${h*0.95}" r="2.5" fill="#FFFFFF" opacity="0.28"/>
+      <circle cx="${w*0.2}" cy="${h*0.6}" r="4" fill="#FFFFFF" opacity="0.38"/>`
+  },
+  {
+    id:'gratidao', color:'#EAD3A0', textColor:'#5C4416', divColor:'#C9A35C', refColor:'#C9A35C', brandColor:'#5C4416',
+    ko:'범사에 감사하라\n이것이 하나님의 뜻이니라', pt:'Em tudo dai graças,\npois esta é a vontade de Deus.', ref:'1 Tessalonicenses 5:18',
+    bg:(w,h)=>`
+      <defs><radialGradient id="bg" cx="0.5" cy="0.25" r="0.9">
+        <stop offset="0%" stop-color="#FBF1D8"/>
+        <stop offset="100%" stop-color="#EAD3A0"/>
+      </radialGradient></defs>
+      <rect width="${w}" height="${h}" fill="url(#bg)"/>
+      <circle cx="${w/2}" cy="70" r="${w*0.18}" fill="#FBF4E4" opacity="0.5"/>
+      <g opacity="0.3" stroke="#C9A35C" stroke-width="1.5">
+        <line x1="${w/2}" y1="0" x2="${w/2}" y2="30"/>
+        <line x1="${w/2-60}" y1="20" x2="${w/2-45}" y2="42"/>
+        <line x1="${w/2+60}" y1="20" x2="${w/2+45}" y2="42"/>
+      </g>`
+  },
+  {
+    id:'familia', color:'#DDBE9E', textColor:'#5C3D20', divColor:'#B68652', refColor:'#B68652', brandColor:'#5C3D20',
+    ko:'나와 내 집은\n여호와를 섬기겠노라', pt:'Eu e a minha casa\nserviremos ao Senhor.', ref:'Josué 24:15',
+    bg:(w,h)=>`
+      <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#F2E5D6"/>
+        <stop offset="100%" stop-color="#DDBE9E"/>
+      </linearGradient></defs>
+      <rect width="${w}" height="${h}" fill="url(#bg)"/>
+      <g opacity="0.3">
+        <path d="M0 ${h-40} Q${w*0.3} ${h-60} ${w/2} ${h-45} T${w} ${h-50}" stroke="#9C7349" stroke-width="2" fill="none"/>
+        <ellipse cx="${w*0.13}" cy="${h-48}" rx="9" ry="5" fill="#9C7349" transform="rotate(-10 ${w*0.13} ${h-48})"/>
+        <ellipse cx="${w*0.85}" cy="${h-52}" rx="9" ry="5" fill="#9C7349" transform="rotate(15 ${w*0.85} ${h-52})"/>
+      </g>`
+  },
+  {
+    id:'oppa', color:'#F0CFDA', textColor:'#6B2E42', divColor:'#C97990', refColor:'#C97990', brandColor:'#6B2E42',
+    ko:'네 마음을 다하여\n여호와를 신뢰하라', pt:'Confia no Senhor\nde todo o teu coração.', ref:'Provérbios 3:5',
+    bg:(w,h)=>`
+      <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FBEDF1"/>
+        <stop offset="100%" stop-color="#F0CFDA"/>
+      </linearGradient></defs>
+      <rect width="${w}" height="${h}" fill="url(#bg)"/>
+      <g opacity="0.55">
+        <g transform="translate(40,50)">
+          <ellipse cx="0" cy="-7" rx="6" ry="8" fill="#E8A8BE"/>
+          <ellipse cx="6.5" cy="-2" rx="6" ry="8" fill="#E8A8BE" transform="rotate(72)"/>
+          <ellipse cx="4" cy="6" rx="6" ry="8" fill="#E8A8BE" transform="rotate(144)"/>
+          <ellipse cx="-4" cy="6" rx="6" ry="8" fill="#E8A8BE" transform="rotate(216)"/>
+          <ellipse cx="-6.5" cy="-2" rx="6" ry="8" fill="#E8A8BE" transform="rotate(288)"/>
+          <circle cx="0" cy="0" r="3" fill="#D88FA8"/>
+        </g>
+        <g transform="translate(${w-45},${h-75}) scale(0.8)">
+          <ellipse cx="0" cy="-7" rx="6" ry="8" fill="#E8A8BE"/>
+          <ellipse cx="6.5" cy="-2" rx="6" ry="8" fill="#E8A8BE" transform="rotate(72)"/>
+          <ellipse cx="4" cy="6" rx="6" ry="8" fill="#E8A8BE" transform="rotate(144)"/>
+          <ellipse cx="-4" cy="6" rx="6" ry="8" fill="#E8A8BE" transform="rotate(216)"/>
+          <ellipse cx="-6.5" cy="-2" rx="6" ry="8" fill="#E8A8BE" transform="rotate(288)"/>
+          <circle cx="0" cy="0" r="3" fill="#D88FA8"/>
+        </g>
+        <circle cx="${w-30}" cy="40" r="4" fill="#E8A8BE" opacity="0.6"/>
+        <circle cx="25" cy="${h-40}" r="3.5" fill="#E8A8BE" opacity="0.6"/>
+        <circle cx="${w-18}" cy="${h*0.35}" r="3" fill="#E8A8BE" opacity="0.5"/>
+      </g>`
+  },
+];
+
+let currentTheme = 0;
+let currentFormat = 'feed';
+
+// build theme dots
+const themeRow = document.getElementById('themeRow');
+themes.forEach((t,i)=>{
+  const d = document.createElement('div');
+  d.className = 'theme-dot' + (i===0?' on':'');
+  d.style.background = t.color;
+  d.onclick = ()=>{ currentTheme=i; document.querySelectorAll('.theme-dot').forEach((x,xi)=>x.classList.toggle('on',xi===i)); renderCard(); };
+  themeRow.appendChild(d);
+});
+
+function getDimensions(){
+  return currentFormat==='feed' ? {w:300,h:375} : {w:169,h:300};
+}
+
+function renderCard(){
+  const t = themes[currentTheme];
+  const card = document.getElementById('cardPreview');
+  const {w,h} = getDimensions();
+
+  card.className = 'card-preview ' + currentFormat;
+
+  const bg = document.getElementById('cardBg');
+  bg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  bg.innerHTML = t.bg(w,h);
+
+  const fontSize = currentFormat==='feed' ? '17px' : '14px';
+  const ptSize = currentFormat==='feed' ? '11px' : '10px';
+
+  document.getElementById('cKo').textContent = '';
+  const koEl = document.getElementById('cKo');
+  koEl.style.color = t.textColor;
+  koEl.style.fontSize = fontSize;
+  koEl.innerHTML = t.ko.replace(/\n/g,'<br>');
+
+  const divEl = document.getElementById('cDiv');
+  divEl.style.background = t.divColor;
+
+  const ptEl = document.getElementById('cPt');
+  ptEl.style.color = t.textColor;
+  ptEl.style.fontSize = ptSize;
+  ptEl.style.opacity = '0.75';
+  ptEl.innerHTML = t.pt.replace(/\n/g,'<br>');
+
+  const refEl = document.getElementById('cRef');
+  refEl.style.color = t.refColor;
+  refEl.textContent = t.ref;
+
+  document.getElementById('cBrand').style.color = t.brandColor;
+}
+
+function setFormat(fmt, btn){
+  currentFormat = fmt;
+  document.querySelectorAll('.fmt-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderCard();
+}
+
+function shareWpp(){ alert('Abrindo WhatsApp com o card...'); }
+function shareInsta(){ alert('Salvando card e abrindo Instagram...'); }
+function shareStories(){ alert('Abrindo Stories do Instagram...'); }
+function saveCard(){ alert('Card salvo na galeria!'); }
+
+renderCard();
+</script>
+
+</body>
+</html>

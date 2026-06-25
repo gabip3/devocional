@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>매일 — Versículos</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&family=Noto+Sans+KR:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root{
+  --paper:#F8F4EE;
+  --paper2:#EDE6D6;
+  --gold:#C9B99A;
+  --ink:#2E2519;
+  --ink2:#7A6E5A;
+  --ink3:#B0A08A;
+  --terra:#A85C3E;
+}
+
+html, body {
+  background:#E8E2D8;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.phone{
+  width:100%;max-width:390px;
+  margin:24px auto;
+  background:var(--paper);
+  min-height:800px;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  position:relative;
+  border-radius: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+}
+
+.sbar{
+  padding:18px 28px 0;
+  display:flex;justify-content:space-between;
+  font-size:11px;color:var(--ink3);font-weight:300;
+}
+
+.hdr{
+  padding:18px 28px 0;
+  display:flex;align-items:center;gap:14px;
+}
+.back-btn{
+  width:30px;height:30px;border-radius:50%;
+  border:0.5px solid var(--paper2);background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;
+}
+.back-btn svg{width:15px;height:15px;color:var(--ink2);}
+.hdr-text h1{
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:26px;font-weight:300;color:var(--ink);letter-spacing:-0.3px;
+}
+.hdr-text .sub{
+  font-family:'Cormorant Garamond',serif;
+  font-size:14px;font-style:italic;font-weight:300;
+  color:var(--ink2);margin-top:4px;
+}
+
+/* ===== VIEW 1: category grid ===== */
+.view1{padding:20px 28px 0;flex:1;}
+.cat-grid{
+  display:flex;flex-direction:column;gap:12px;margin-top:8px;
+}
+.cat-card{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 18px;
+  border-radius:18px;
+  cursor:pointer;
+  transition:opacity 0.15s;
+}
+.cat-card:hover{opacity:0.85;}
+.cat-thumb{
+  width:46px;height:46px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;background:rgba(255,255,255,0.55);
+}
+.cat-thumb svg{width:22px;height:22px;}
+.cat-body{flex:1;}
+.cat-name{
+  font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;color:var(--ink);
+}
+.cat-desc{
+  font-family:'Cormorant Garamond',serif;font-size:12.5px;font-style:italic;
+  color:var(--ink2);margin-top:2px;line-height:1.3;
+}
+.cat-chevron{width:14px;height:14px;color:var(--ink3);flex-shrink:0;}
+
+.cat-footer{
+  margin:16px 0 0;padding:14px 0 0;
+  border-top:0.5px solid var(--paper2);
+  text-align:center;
+}
+.cat-footer button{
+  font-family:'Noto Sans KR',sans-serif;font-size:12px;color:var(--ink3);
+  background:none;border:none;cursor:pointer;
+}
+
+/* ===== VIEW 2: category detail ===== */
+.view2{display:none;flex:1;flex-direction:column;}
+.view2.active{display:flex;}
+.view1.hidden{display:none;}
+
+.featured{
+  margin:16px 28px 0;
+  border-radius:22px;
+  padding:24px 22px;
+  text-align:center;
+}
+.featured-label{
+  font-family:'Noto Sans KR',sans-serif;font-size:9px;color:var(--ink3);
+  letter-spacing:1.6px;text-transform:uppercase;margin-bottom:14px;
+}
+.featured-ko{
+  font-family:'Dongle',sans-serif;font-size:28px;font-weight:700;color:var(--ink);
+  line-height:1.15;
+}
+.featured-ref{
+  font-family:'Noto Sans KR',sans-serif;font-size:11px;color:var(--ink3);margin-top:12px;
+}
+.featured-actions{
+  display:flex;justify-content:center;gap:10px;
+  margin-top:18px;padding-top:16px;
+  border-top:0.5px solid rgba(0,0,0,0.07);
+}
+.featured-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:20px;
+  background:rgba(255,255,255,0.6);
+  border:0.5px solid rgba(0,0,0,0.08);
+  font-family:'Noto Sans KR',sans-serif;font-size:11.5px;color:var(--ink2);
+  cursor:pointer;
+}
+.featured-btn svg{width:14px;height:14px;}
+
+.sublabel{
+  font-family:'Noto Sans KR',sans-serif;font-size:9px;color:var(--ink3);
+  letter-spacing:1.6px;text-transform:uppercase;
+  padding:22px 28px 4px;
+}
+
+.list{
+  flex:1;overflow-y:auto;padding:8px 28px 8px;
+  display:flex;flex-direction:column;
+  scrollbar-width:none;
+}
+.list::-webkit-scrollbar{display:none;}
+
+.vrow{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 0;
+  border-bottom:0.5px solid var(--paper2);
+  cursor:pointer;
+}
+.vrow-ko{
+  flex:1;min-width:0;
+  font-family:'Dongle',sans-serif;font-size:20px;font-weight:700;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.vrow-ref{
+  font-family:'Noto Sans KR',sans-serif;font-size:10px;color:var(--ink3);
+  flex-shrink:0;
+}
+.vrow-heart{width:15px;height:15px;flex-shrink:0;color:var(--ink3);cursor:pointer;}
+.vrow-heart.active{color:var(--terra);}
+
+.tabs{
+  padding:14px 0 26px;display:flex;justify-content:space-around;
+  border-top:0.5px solid var(--paper2);background:var(--paper);
+}
+.tab{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;background:none;border:none;}
+.tab span{
+  font-family:'Noto Sans KR',sans-serif;font-size:9px;letter-spacing:0.8px;
+  text-transform:uppercase;color:var(--ink3);font-weight:300;
+}
+.tab svg{width:19px;height:19px;color:var(--ink3);}
+.tab.on svg{color:var(--ink);}
+.tab.on span{color:var(--ink);}
+.tab-dot{width:3px;height:3px;border-radius:50%;background:var(--ink);margin-top:1px;}
+
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <div class="sbar">
+    <span>9:41</span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B0A08A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B0A08A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>
+    </div>
+  </div>
+
+  <div class="hdr" id="hdr">
+    <div class="hdr-text">
+      <h1 id="hdrTitle">Versículos</h1>
+      <div class="sub" id="hdrSub">escolha pelo que seu coração pede</div>
+    </div>
+  </div>
+
+  <!-- VIEW 1: categories -->
+  <div class="view1" id="view1">
+    <div class="cat-grid" id="catGrid"></div>
+  </div>
+
+  <!-- VIEW 2: category detail -->
+  <div class="view2" id="view2">
+    <div class="featured" id="featured"></div>
+    <div class="sublabel">mais versículos deste tema</div>
+    <div class="list" id="list"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Hoje</span>
+    </button>
+    <button class="tab on">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Versículos</span>
+      <div class="tab-dot"></div>
+    </button>
+  </div>
+
+</div>
+
+<script>
+const categories = [
+  {
+    id:'paz', name:'Paz', desc:'descanse num lugar quieto',
+    color:'#D9E4D3', colorText:'#4D6B43',
+    icon:'<path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/>',
+    featured:{ko:'평안을 너희에게 끼치노니 곧 나의 평안을 너희에게 주노라', ref:'João 14:27'},
+    list:[
+      {ko:'주께서 심지가 견고한 자를 평강에 평강으로 지키시리니', ref:'Isaías 26:3', fav:false},
+      {ko:'너희는 마음에 근심하지 말라', ref:'João 14:1', fav:false},
+    ]
+  },
+  {
+    id:'ansiedade', name:'Ansiedade', desc:'deixe suas preocupações nas mãos d\u2019Ele',
+    color:'#D6E2E8', colorText:'#3E5F6B',
+    icon:'<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M9 11l1.5 1.5L15 8"/>',
+    featured:{ko:'아무것도 염려하지 말고 다만 모든 일에 기도와 간구로', ref:'Filipenses 4:6'},
+    list:[
+      {ko:'너희 염려를 다 주께 맡기라 이는 그가 너희를 돌보심이라', ref:'1 Pedro 5:7', fav:false},
+      {ko:'두려워하지 말라 내가 너와 함께 함이라', ref:'Isaías 41:10', fav:false},
+    ]
+  },
+  {
+    id:'gratidao', name:'Gratidão', desc:'cultive um coração grato todos os dias',
+    color:'#F2E4C4', colorText:'#7A5E26',
+    icon:'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+    featured:{ko:'범사에 감사하라 이것이 그리스도 예수 안에서 너희를 향하신 하나님의 뜻이니라', ref:'1 Tessalonicenses 5:18'},
+    list:[
+      {ko:'여호와께 감사하라 그는 선하시며', ref:'Salmos 136:1', fav:false},
+      {ko:'감사함으로 그 문에 들어가며', ref:'Salmos 100:4', fav:false},
+    ]
+  },
+  {
+    id:'familia', name:'Família', desc:'Deus abençoa e protege sua família',
+    color:'#E8D7C8', colorText:'#7A5333',
+    icon:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+    featured:{ko:'나와 내 집은 여호와를 섬기겠노라', ref:'Josué 24:15'},
+    list:[
+      {ko:'마땅히 행할 길을 아이에게 가르치라', ref:'Provérbios 22:6', fav:false},
+      {ko:'네 부모를 공경하라', ref:'Êxodo 20:12', fav:false},
+    ]
+  },
+  {
+    id:'oppa', name:'Oppa', desc:'espere com leveza, confie no tempo de Deus', oppa:true,
+    color:'#F2DCE2', colorText:'#8A3F52',
+    icon:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.7 1-1a5.5 5.5 0 0 0 0-7.8z"/>',
+    featured:{ko:'네 마음을 다하여 여호와를 신뢰하고 네 명철을 의지하지 말라', ref:'Provérbios 3:5'},
+    list:[
+      {ko:'여호와는 자기를 바라는 자에게 선을 베푸시는도다', ref:'Lamentações 3:25', fav:true},
+      {ko:'여호와를 기다리라 강하고 담대하며', ref:'Salmos 27:14', fav:false},
+    ]
+  },
+];
+
+const catGrid = document.getElementById('catGrid');
+categories.forEach(cat => {
+  const c = document.createElement('div');
+  c.className = 'cat-card';
+  c.style.background = cat.color;
+  c.innerHTML = `
+    <div class="cat-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="${cat.colorText}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${cat.icon}</svg></div>
+    <div class="cat-body">
+      <div class="cat-name" style="color:${cat.colorText}">${cat.oppa ? 'Oppa ♡' : cat.name}</div>
+      <div class="cat-desc">${cat.desc}</div>
+    </div>
+    <svg class="cat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  `;
+  c.onclick = () => openCategory(cat.id);
+  catGrid.appendChild(c);
+});
+
+function openCategory(id){
+  const cat = categories.find(c => c.id === id);
+  document.getElementById('view1').classList.add('hidden');
+  document.getElementById('view2').classList.add('active');
+  document.getElementById('hdrTitle').textContent = cat.oppa ? 'Oppa ♡' : cat.name;
+  document.getElementById('hdrSub').textContent = cat.desc;
+
+  const backBtn = `<button class="back-btn" onclick="closeCategory()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>`;
+  document.getElementById('hdr').querySelector('.hdr-text').insertAdjacentHTML('beforebegin', backBtn);
+
+  const featuredEl = document.getElementById('featured');
+  featuredEl.style.background = cat.color;
+  featuredEl.innerHTML = `
+    <div class="featured-label" style="color:${cat.colorText}">versículo em destaque</div>
+    <div class="featured-ko">${cat.featured.ko}</div>
+    <div class="featured-ref">${cat.featured.ref}</div>
+    <div class="featured-actions">
+      <button class="featured-btn" onclick="toggleFeaturedFav(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        guardar
+      </button>
+      <button class="featured-btn" onclick="shareFeatured('${cat.featured.ko.replace(/'/g,"\\'")}', '${cat.featured.ref}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        compartilhar
+      </button>
+    </div>
+  `;
+
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  cat.list.forEach((v, idx) => {
+    const row = document.createElement('div');
+    row.className = 'vrow';
+    row.innerHTML = `
+      <div class="vrow-ko">${v.ko}</div>
+      <div class="vrow-ref">${v.ref}</div>
+      <svg class="vrow-heart${v.fav?' active':''}" viewBox="0 0 24 24" fill="${v.fav?'currentColor':'none'}" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    `;
+    row.querySelector('.vrow-heart').onclick = (e) => {
+      e.stopPropagation();
+      v.fav = !v.fav;
+      const h = e.currentTarget;
+      h.classList.toggle('active');
+      h.setAttribute('fill', v.fav ? 'currentColor' : 'none');
+    };
+    list.appendChild(row);
+  });
+}
+
+function toggleFeaturedFav(btn){
+  btn.style.background = btn.style.background === 'rgb(46, 37, 25)' ? 'rgba(255,255,255,0.6)' : '#2E2519';
+  btn.style.color = btn.style.color === 'rgb(248, 244, 238)' ? '' : '#F8F4EE';
+}
+
+function shareFeatured(ko, ref){
+  alert('Compartilhar: "' + ko + '" — ' + ref + '\n\n(aqui abriria o gerador de card visual para Instagram/WhatsApp)');
+}
+
+function closeCategory(){
+  document.getElementById('view1').classList.remove('hidden');
+  document.getElementById('view2').classList.remove('active');
+  document.getElementById('hdrTitle').textContent = 'Versículos';
+  document.getElementById('hdrSub').textContent = 'escolha pelo que seu coração pede';
+  const back = document.querySelector('.back-btn');
+  if(back) back.remove();
+}
+</script>
+
+</body>
+</html>
