@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#F8F4EE">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="매일">
+<meta name="description" content="Todos os dias com Deus. Versículos em português e coreano.">
+<link rel="manifest" href="manifest.json">
+<title>매일 — Todos os dias com Deus</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&family=Noto+Sans+KR:wght@300;400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;overflow:hidden;background:#E8E2D8;font-family:'Noto Sans KR',sans-serif;}
+
+:root{
+  --paper:#F8F4EE;
+  --paper2:#EDE6D6;
+  --gold:#C9B99A;
+  --ink:#2E2519;
+  --ink2:#7A6E5A;
+  --ink3:#B0A08A;
+  --terra:#A85C3E;
+}
+
+/* ===== SHELL ===== */
+.app{
+  width:100%;max-width:430px;
+  height:100%;
+  margin:0 auto;
+  position:relative;
+  overflow:hidden;
+}
+
+/* ===== SCREENS ===== */
+.screen{
+  position:absolute;inset:0;
+  background:var(--paper);
+  display:flex;flex-direction:column;
+  overflow-y:auto;overflow-x:hidden;
+  transform:translateX(100%);
+  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  -webkit-overflow-scrolling:touch;
+}
+.screen.active{transform:translateX(0);}
+.screen.left{transform:translateX(-30%);}
+
+/* ===== SHARED ===== */
+.sbar{
+  padding:14px 24px 0;flex-shrink:0;
+  display:flex;justify-content:space-between;
+  font-size:11px;color:var(--ink3);font-weight:300;
+}
+.photo-zone{width:100%;flex-shrink:0;position:relative;overflow:hidden;}
+.photo-zone svg{width:100%;display:block;}
+
+.tabs{
+  flex-shrink:0;
+  padding:12px 0 max(20px, env(safe-area-inset-bottom));
+  display:flex;justify-content:space-around;
+  border-top:0.5px solid var(--paper2);background:var(--paper);
+}
+.tab{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;background:none;border:none;}
+.tab span{font-size:9px;letter-spacing:0.8px;text-transform:uppercase;color:var(--ink3);font-weight:300;}
+.tab svg{width:20px;height:20px;color:var(--ink3);}
+.tab.on svg{color:var(--ink);}
+.tab.on span{color:var(--ink);}
+.tab-dot{width:3px;height:3px;border-radius:50%;background:var(--ink);}
+
+.back-btn{
+  width:32px;height:32px;border-radius:50%;
+  border:0.5px solid var(--paper2);background:transparent;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.back-btn svg{width:15px;height:15px;color:var(--ink2);}
+
+/* ===== SPLASH ===== */
+#splash .photo-zone{height:400px;}
+#splash .content{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 32px;}
+#splash .mark{font-family:'Dongle',sans-serif;font-size:64px;font-weight:700;color:var(--ink);margin-top:-28px;position:relative;z-index:2;line-height:1;}
+#splash .tagline{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;font-style:italic;color:var(--ink2);margin-top:14px;line-height:1.5;}
+#splash .divider{width:28px;height:1px;background:var(--gold);margin:22px auto 20px;}
+#splash .features{width:100%;display:flex;flex-direction:column;gap:16px;text-align:left;padding:0 8px;}
+#splash .feature{display:flex;align-items:center;gap:14px;}
+#splash .feature svg{width:17px;height:17px;color:var(--gold);flex-shrink:0;}
+#splash .feature span{font-size:13px;font-weight:300;color:var(--ink2);line-height:1.4;}
+#splash .feature b{font-weight:400;color:var(--ink);}
+#splash .bottom{padding:24px 32px max(32px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:12px;}
+#splash .start-btn{width:100%;background:var(--ink);color:var(--paper);border:none;border-radius:30px;padding:16px;font-family:'Dongle',sans-serif;font-size:22px;font-weight:700;cursor:pointer;}
+
+/* ===== HOJE ===== */
+#hoje .photo-zone{height:240px;}
+#hoje .hdr{padding:10px 28px 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+#hoje .hdr-l h1{font-family:'Noto Sans KR',sans-serif;font-size:24px;font-weight:300;color:var(--ink);letter-spacing:-0.3px;}
+#hoje .hdr-l .date{font-size:11px;color:var(--ink3);margin-top:1px;}
+#hoje .card{margin:14px 18px 0;flex-shrink:0;}
+#hoje .ref-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+#hoje .ref{font-size:10px;color:var(--ink3);letter-spacing:0.8px;text-transform:uppercase;}
+#hoje .verse-ko{font-family:'Dongle',sans-serif;font-size:30px;font-weight:700;color:var(--ink);line-height:1.15;text-align:center;margin-bottom:16px;}
+#hoje .verse-ko .w{cursor:pointer;border-radius:2px;padding:0 2px;transition:background 0.15s,color 0.15s;}
+#hoje .verse-ko .w.lit{background:var(--ink);color:var(--paper);}
+#hoje .verse-ko .w.tap{background:var(--gold);color:var(--ink);}
+#hoje .rule{width:24px;height:1px;background:var(--gold);margin:0 auto 14px;}
+#hoje .verse-pt{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;font-style:italic;color:var(--ink);line-height:1.4;text-align:center;}
+#hoje .meaning-area{margin:14px 18px 0;min-height:48px;display:flex;align-items:center;justify-content:center;text-align:center;flex-shrink:0;}
+#hoje .meaning-ko{font-family:'Dongle',sans-serif;font-size:24px;font-weight:700;color:var(--ink);margin-right:8px;}
+#hoje .meaning-arrow{width:12px;height:12px;color:var(--gold);margin-right:8px;flex-shrink:0;}
+#hoje .meaning-def{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;font-style:italic;color:var(--ink);line-height:1.4;}
+#hoje .meaning-empty{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;font-style:italic;color:var(--ink2);}
+#hoje .player-zone{margin:14px 18px 0;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+#hoje .play-btn{width:36px;height:36px;border-radius:50%;background:transparent;border:0.5px solid var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+#hoje .play-btn svg{width:14px;height:14px;color:var(--ink);}
+#hoje .progress-track{flex:1;height:1px;background:var(--paper2);position:relative;border-radius:1px;}
+#hoje .progress-fill{height:100%;background:var(--gold);border-radius:1px;width:0%;transition:width 0.1s linear;}
+#hoje .progress-dot{width:6px;height:6px;border-radius:50%;background:var(--ink);position:absolute;top:50%;right:-3px;transform:translateY(-50%);}
+#hoje .time-now{font-size:10px;color:var(--ink3);font-weight:300;}
+#hoje .pw-section{margin:16px 18px 0;border-top:0.5px solid var(--paper2);padding-top:14px;flex-shrink:0;}
+#hoje .pw-label{font-size:9px;color:var(--ink3);letter-spacing:1.8px;text-transform:uppercase;font-weight:300;margin-bottom:10px;text-align:center;}
+#hoje .words-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding-bottom:16px;}
+#hoje .wchip{font-family:'Dongle',sans-serif;font-size:18px;font-weight:700;color:var(--ink2);cursor:pointer;padding:3px 8px;border-bottom:0.5px solid transparent;transition:all 0.12s;background:none;border-left:none;border-right:none;border-top:none;}
+#hoje .wchip:hover,#hoje .wchip.sel{color:var(--ink);border-bottom:1px solid var(--ink);}
+#hoje .actions-row{display:flex;justify-content:space-between;margin:0 18px;padding:10px 0 6px;border-top:0.5px solid var(--paper2);flex-shrink:0;}
+#hoje .act-btn{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2);background:none;border:none;cursor:pointer;}
+#hoje .act-btn svg{width:16px;height:16px;}
+#hoje .heart-icon{width:17px;height:17px;cursor:pointer;color:var(--ink3);}
+#hoje .heart-icon.active{color:var(--terra);fill:var(--terra);}
+
+/* ===== VERSÍCULOS ===== */
+#versiculos .hdr{padding:16px 28px 0;flex-shrink:0;}
+#versiculos .hdr h1{font-family:'Noto Sans KR',sans-serif;font-size:24px;font-weight:300;color:var(--ink);}
+#versiculos .hdr .sub{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;font-weight:400;color:var(--ink2);margin-top:3px;}
+#versiculos .cat-grid{padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
+#versiculos .cat-card{display:flex;align-items:center;gap:14px;padding:16px;border-radius:18px;cursor:pointer;}
+#versiculos .cat-thumb{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,0.55);}
+#versiculos .cat-thumb svg{width:20px;height:20px;}
+#versiculos .cat-name{font-family:'Dongle',sans-serif;font-size:20px;font-weight:700;}
+#versiculos .cat-desc{font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:300;color:var(--ink2);margin-top:1px;}
+#versiculos .cat-chevron{width:14px;height:14px;color:var(--ink3);margin-left:auto;flex-shrink:0;}
+
+/* detail */
+#versiculos .detail{display:none;flex-direction:column;flex:1;}
+#versiculos .detail.show{display:flex;}
+#versiculos .detail-hdr{padding:16px 28px 0;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+#versiculos .detail-hdr h2{font-family:'Dongle',sans-serif;font-size:24px;font-weight:700;color:var(--ink);}
+#versiculos .featured{margin:14px 20px 0;border-radius:20px;padding:22px 20px;flex-shrink:0;}
+#versiculos .feat-label{font-size:9px;color:var(--ink3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;}
+#versiculos .feat-ko{font-family:'Dongle',sans-serif;font-size:22px;font-weight:700;color:var(--ink);line-height:1.2;text-align:center;}
+#versiculos .feat-ref{font-size:10px;color:var(--ink3);margin-top:10px;text-align:center;}
+#versiculos .feat-actions{display:flex;justify-content:center;gap:10px;margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(0,0,0,0.07);}
+#versiculos .feat-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.6);border:0.5px solid rgba(0,0,0,0.08);font-size:11px;color:var(--ink2);cursor:pointer;}
+#versiculos .feat-btn svg{width:13px;height:13px;}
+#versiculos .sublabel{font-size:9px;color:var(--ink3);letter-spacing:1.5px;text-transform:uppercase;padding:16px 28px 6px;flex-shrink:0;}
+#versiculos .vlist{flex:1;overflow-y:auto;padding:0 28px 12px;}
+#versiculos .vrow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:0.5px solid var(--paper2);cursor:pointer;}
+#versiculos .vrow-ko{flex:1;font-family:'Dongle',sans-serif;font-size:17px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#versiculos .vrow-ref{font-size:10px;color:var(--ink3);flex-shrink:0;}
+#versiculos .vrow-heart{width:15px;height:15px;flex-shrink:0;color:var(--ink3);cursor:pointer;}
+#versiculos .vrow-heart.active{color:var(--terra);fill:var(--terra);}
+
+/* ===== PLUS ===== */
+#plus .photo-zone{height:210px;}
+#plus .close-btn{position:absolute;top:14px;right:20px;z-index:3;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.15);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+#plus .close-btn svg{width:13px;height:13px;color:white;}
+#plus .plus-content{flex:1;display:flex;flex-direction:column;padding:0 28px;}
+#plus .plus-badge{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--paper);padding:5px 14px;border-radius:20px;font-size:10px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;margin:18px auto 0;}
+#plus .plus-badge svg{width:11px;height:11px;}
+#plus .headline{font-family:'Dongle',sans-serif;font-size:34px;font-weight:700;color:var(--ink);text-align:center;margin-top:8px;line-height:1.1;}
+#plus .subline{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;font-style:italic;color:var(--ink2);text-align:center;margin-top:6px;}
+#plus .divider{width:24px;height:1px;background:var(--gold);margin:16px auto;}
+#plus .benefits{display:flex;flex-direction:column;gap:12px;}
+#plus .benefit{display:flex;align-items:flex-start;gap:12px;}
+#plus .benefit-icon{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+#plus .benefit-icon svg{width:14px;height:14px;}
+#plus .benefit-title{font-family:'Dongle',sans-serif;font-size:18px;font-weight:700;color:var(--ink);line-height:1.1;}
+#plus .benefit-desc{font-size:11px;font-weight:300;color:var(--ink2);margin-top:1px;line-height:1.35;}
+#plus .price-area{margin-top:auto;padding:18px 0 max(28px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:10px;}
+#plus .price-main{font-family:'Dongle',sans-serif;font-size:40px;font-weight:700;color:var(--ink);line-height:1;text-align:center;}
+#plus .price-desc{font-size:11px;color:var(--ink3);font-weight:300;margin-top:3px;text-align:center;}
+#plus .cta-btn{width:100%;background:var(--ink);color:var(--paper);border:none;border-radius:30px;padding:16px;font-family:'Dongle',sans-serif;font-size:22px;font-weight:700;cursor:pointer;}
+#plus .skip{font-size:11px;color:var(--ink3);cursor:pointer;background:none;border:none;}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============ SPLASH ============ -->
+<div class="screen active" id="splash">
+  <div class="photo-zone" style="height:400px">
+    <svg viewBox="0 0 390 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="s-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D6C9B4"/><stop offset="100%" stop-color="#E8DDD0"/></linearGradient>
+        <linearGradient id="s-glow" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#FBF4E4" stop-opacity="0.85"/><stop offset="100%" stop-color="#F8F4EE" stop-opacity="0"/></linearGradient>
+        <linearGradient id="s-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F8F4EE" stop-opacity="0"/><stop offset="100%" stop-color="#F8F4EE" stop-opacity="1"/></linearGradient>
+      </defs>
+      <rect width="390" height="400" fill="url(#s-sky)"/>
+      <ellipse cx="195" cy="130" rx="90" ry="90" fill="#FBF4E4" opacity="0.45"/>
+      <rect x="0" y="0" width="390" height="400" fill="url(#s-glow)" opacity="0.7"/>
+      <g opacity="0.48">
+        <path d="M55 0 Q48 50 52 110 Q50 160 46 200" stroke="#7A9A6A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M52 18 Q30 8 18 22 Q28 36 52 18Z" fill="#7A9A6A"/>
+        <path d="M51 42 Q70 30 80 42 Q68 56 51 42Z" fill="#6B8A55"/>
+        <path d="M50 68 Q28 56 16 68 Q30 82 50 68Z" fill="#7A9A6A"/>
+        <path d="M50 96 Q74 82 86 96 Q72 112 50 96Z" fill="#6B8A55"/>
+        <path d="M48 126 Q24 114 12 128 Q28 142 48 126Z" fill="#7A9A6A"/>
+        <path d="M47 154 Q68 140 78 156 Q64 170 47 154Z" fill="#6B8A55" opacity="0.85"/>
+      </g>
+      <rect x="0" y="0" width="390" height="400" fill="url(#s-fade)"/>
+    </svg>
+  </div>
+  <div class="content" style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 32px;">
+    <div class="mark" style="font-family:'Dongle',sans-serif;font-size:64px;font-weight:700;color:#2E2519;margin-top:-28px;position:relative;z-index:2;line-height:1;">매일</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;font-style:italic;color:#7A6E5A;margin-top:14px;line-height:1.5;">Todos os dias com Deus</div>
+    <div style="width:28px;height:1px;background:#C9B99A;margin:22px auto 20px;"></div>
+    <div style="width:100%;display:flex;flex-direction:column;gap:16px;text-align:left;padding:0 8px;">
+      <div style="display:flex;align-items:center;gap:14px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C9B99A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span style="font-size:13px;font-weight:300;color:#7A6E5A;">Leia o <b style="font-weight:400;color:#2E2519;">versículo do dia</b></span></div>
+      <div style="display:flex;align-items:center;gap:14px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C9B99A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg><span style="font-size:13px;font-weight:300;color:#7A6E5A;">Ouça em <b style="font-weight:400;color:#2E2519;">coreano</b>, palavra por palavra</span></div>
+      <div style="display:flex;align-items:center;gap:14px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C9B99A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span style="font-size:13px;font-weight:300;color:#7A6E5A;">Toque nas palavras e <b style="font-weight:400;color:#2E2519;">veja o significado</b></span></div>
+      <div style="display:flex;align-items:center;gap:14px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C9B99A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span style="font-size:13px;font-weight:300;color:#7A6E5A;">Compartilhe <b style="font-weight:400;color:#2E2519;">beleza e esperança</b></span></div>
+    </div>
+  </div>
+  <div style="padding:24px 32px max(32px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:12px;">
+    <button onclick="goTo('hoje','splash')" style="width:100%;background:#2E2519;color:#F8F4EE;border:none;border-radius:30px;padding:16px;font-family:'Dongle',sans-serif;font-size:22px;font-weight:700;cursor:pointer;">Começar</button>
+    <button onclick="goTo('hoje','splash')" style="font-size:11px;color:#B0A08A;cursor:pointer;background:none;border:none;">já tenho o hábito, pular</button>
+  </div>
+</div>
+
+<!-- ============ HOJE ============ -->
+<div class="screen" id="hoje">
+  <div class="photo-zone" style="height:230px;position:relative;">
+    <svg viewBox="0 0 390 230" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;">
+      <defs>
+        <linearGradient id="h-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D6C9B4"/><stop offset="100%" stop-color="#E8DDD0"/></linearGradient>
+        <linearGradient id="h-glow" x1="0.3" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#F5EFE2" stop-opacity="0.9"/><stop offset="100%" stop-color="#D6C9B4" stop-opacity="0"/></linearGradient>
+        <linearGradient id="h-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F8F4EE" stop-opacity="0"/><stop offset="100%" stop-color="#F8F4EE" stop-opacity="1"/></linearGradient>
+      </defs>
+      <rect width="390" height="230" fill="url(#h-sky)"/>
+      <rect x="60" y="0" width="140" height="230" fill="#E2D8C8" opacity="0.35"/>
+      <rect x="80" y="0" width="1.5" height="230" fill="#C9B99A" opacity="0.25"/>
+      <rect x="160" y="0" width="1.5" height="230" fill="#C9B99A" opacity="0.25"/>
+      <rect x="60" y="75" width="102" height="1.5" fill="#C9B99A" opacity="0.25"/>
+      <rect x="60" y="150" width="102" height="1.5" fill="#C9B99A" opacity="0.25"/>
+      <ellipse cx="310" cy="155" rx="50" ry="65" fill="#5C7A4A" opacity="0.5"/>
+      <ellipse cx="338" cy="138" rx="36" ry="50" fill="#6B8A55" opacity="0.4"/>
+      <ellipse cx="290" cy="175" rx="30" ry="44" fill="#4A6A3A" opacity="0.38"/>
+      <rect x="318" y="188" width="3.5" height="42" fill="#4A3A28" opacity="0.55"/>
+      <ellipse cx="28" cy="88" rx="24" ry="34" fill="#6B8A55" opacity="0.45"/>
+      <rect x="0" y="0" width="390" height="230" fill="url(#h-glow)" opacity="0.6"/>
+      <rect x="0" y="0" width="390" height="230" fill="url(#h-fade)"/>
+    </svg>
+    <div style="position:absolute;top:0;left:0;right:0;padding:14px 24px 0;display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.9);font-weight:300;z-index:2;">
+      <span id="h-time">9:41</span>
+      <div style="display:flex;gap:5px;align-items:center;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>
+      </div>
+    </div>
+  </div>
+  <div style="padding:10px 28px 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+    <div>
+      <div style="font-size:22px;font-weight:300;color:#2E2519;letter-spacing:-0.3px;">Hoje</div>
+      <div style="font-size:11px;color:#B0A08A;margin-top:1px;" id="hoje-date"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <span style="font-size:10px;color:#B0A08A;letter-spacing:0.8px;text-transform:uppercase;">Filipenses 4:6</span>
+      <svg id="heartIcon" onclick="toggleHeart()" style="width:17px;height:17px;cursor:pointer;color:#B0A08A;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </div>
+  </div>
+  <div style="padding:18px 28px 0;flex-shrink:0;">
+    <div id="vko" style="font-family:'Dongle',sans-serif;font-size:30px;font-weight:700;color:#2E2519;line-height:1.15;text-align:center;margin-bottom:14px;"></div>
+    <div style="width:24px;height:1px;background:#C9B99A;margin:0 auto 12px;"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;font-style:italic;color:#2E2519;line-height:1.4;text-align:center;">Não andeis ansiosos de coisa alguma; antes em tudo as vossas petições sejam conhecidas diante de Deus.</div>
+  </div>
+  <div id="mzone" style="margin:14px 28px 0;min-height:46px;display:flex;align-items:center;justify-content:center;text-align:center;flex-shrink:0;">
+    <span style="font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;font-style:italic;color:#7A6E5A;">toque em uma palavra</span>
+  </div>
+  <div style="margin:12px 28px 0;display:flex;align-items:center;gap:14px;flex-shrink:0;">
+    <button onclick="togglePlay()" id="pbtn" style="width:36px;height:36px;border-radius:50%;background:transparent;border:0.5px solid #C9B99A;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+      <svg id="playIcon" style="width:14px;height:14px;color:#2E2519;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    </button>
+    <div style="flex:1;height:1px;background:#EDE6D6;position:relative;">
+      <div id="pfill" style="height:100%;background:#C9B99A;border-radius:1px;width:0%;transition:width 0.1s linear;"></div>
+      <div style="width:6px;height:6px;border-radius:50%;background:#2E2519;position:absolute;top:50%;right:-3px;transform:translateY(-50%);"></div>
+    </div>
+    <span id="ct" style="font-size:10px;color:#B0A08A;font-weight:300;">0:00</span>
+  </div>
+  <div style="margin:14px 28px 0;border-top:0.5px solid #EDE6D6;padding-top:12px;flex-shrink:0;">
+    <div style="font-size:9px;color:#B0A08A;letter-spacing:1.8px;text-transform:uppercase;font-weight:300;margin-bottom:10px;text-align:center;">palavra por palavra</div>
+    <div id="chips" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding-bottom:14px;"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;margin:0 28px;padding:10px 0;border-top:0.5px solid #EDE6D6;flex-shrink:0;">
+    <button class="act-btn" onclick="toggleHeart()" style="display:flex;align-items:center;gap:6px;font-size:12px;color:#7A6E5A;background:none;border:none;cursor:pointer;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Guardar
+    </button>
+    <button onclick="goTo('plus','hoje')" style="display:flex;align-items:center;gap:6px;font-size:12px;color:#7A6E5A;background:none;border:none;cursor:pointer;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Compartilhar
+    </button>
+  </div>
+  <div style="flex:1;min-height:8px;"></div>
+  <div class="tabs">
+    <button class="tab on" onclick="goTo('hoje','versiculos')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Hoje</span><div class="tab-dot"></div>
+    </button>
+    <button class="tab" onclick="goTo('versiculos','hoje')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Versículos</span>
+    </button>
+  </div>
+</div>
+
+<!-- ============ VERSÍCULOS ============ -->
+<div class="screen" id="versiculos">
+  <div style="padding:18px 28px 0;flex-shrink:0;">
+    <div style="font-size:22px;font-weight:300;color:#2E2519;letter-spacing:-0.3px;">Versículos</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;font-weight:400;color:#7A6E5A;margin-top:3px;">escolha pelo que seu coração pede</div>
+  </div>
+  <!-- categorias -->
+  <div id="cat-list" style="padding:14px 20px;display:flex;flex-direction:column;gap:10px;flex:1;overflow-y:auto;"></div>
+  <!-- detalhe (oculto inicialmente) -->
+  <div id="cat-detail" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+    <div style="padding:14px 28px 0;display:flex;align-items:center;gap:12px;flex-shrink:0;">
+      <button class="back-btn" onclick="closeCat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div id="det-title" style="font-family:'Dongle',sans-serif;font-size:22px;font-weight:700;color:#2E2519;"></div>
+    </div>
+    <div id="det-featured" style="margin:14px 20px 0;border-radius:20px;padding:20px;flex-shrink:0;"></div>
+    <div style="font-size:9px;color:#B0A08A;letter-spacing:1.5px;text-transform:uppercase;padding:14px 28px 6px;flex-shrink:0;">mais versículos</div>
+    <div id="det-list" style="flex:1;overflow-y:auto;padding:0 28px 12px;"></div>
+  </div>
+  <div class="tabs">
+    <button class="tab" onclick="goTo('hoje','versiculos')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Hoje</span>
+    </button>
+    <button class="tab on">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Versículos</span><div class="tab-dot"></div>
+    </button>
+  </div>
+</div>
+
+<!-- ============ PLUS ============ -->
+<div class="screen" id="plus">
+  <div style="height:210px;position:relative;overflow:hidden;flex-shrink:0;">
+    <svg viewBox="0 0 390 210" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;">
+      <defs>
+        <linearGradient id="p-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D6C9B4"/><stop offset="100%" stop-color="#E8DDD0"/></linearGradient>
+        <linearGradient id="p-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F8F4EE" stop-opacity="0"/><stop offset="100%" stop-color="#F8F4EE" stop-opacity="1"/></linearGradient>
+        <linearGradient id="p-glow" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#FBF4E4" stop-opacity="0.8"/><stop offset="100%" stop-color="#F8F4EE" stop-opacity="0"/></linearGradient>
+      </defs>
+      <rect width="390" height="210" fill="url(#p-sky)"/>
+      <ellipse cx="195" cy="80" rx="75" ry="75" fill="#FBF4E4" opacity="0.5"/>
+      <rect x="0" y="0" width="390" height="210" fill="url(#p-glow)" opacity="0.7"/>
+      <g opacity="0.4">
+        <path d="M340 0 Q330 28 335 60" stroke="#7A9A6A" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <path d="M335 10 Q318 4 312 16 Q322 24 335 10Z" fill="#7A9A6A"/>
+        <path d="M336 28 Q350 20 354 32 Q342 40 336 28Z" fill="#6B8A55"/>
+        <path d="M334 48 Q316 40 310 52 Q324 60 334 48Z" fill="#7A9A6A"/>
+      </g>
+      <g opacity="0.35">
+        <g transform="translate(195,95)">
+          <ellipse cx="0" cy="-5" rx="4.5" ry="6" fill="#E8A8BE"/>
+          <ellipse cx="4.8" cy="-1.5" rx="4.5" ry="6" fill="#E8A8BE" transform="rotate(72)"/>
+          <ellipse cx="3" cy="4.5" rx="4.5" ry="6" fill="#E8A8BE" transform="rotate(144)"/>
+          <ellipse cx="-3" cy="4.5" rx="4.5" ry="6" fill="#E8A8BE" transform="rotate(216)"/>
+          <ellipse cx="-4.8" cy="-1.5" rx="4.5" ry="6" fill="#E8A8BE" transform="rotate(288)"/>
+          <circle cx="0" cy="0" r="2" fill="#D88FA8"/>
+        </g>
+        <circle cx="240" cy="48" r="3" fill="#E8A8BE"/>
+        <circle cx="155" cy="55" r="2.5" fill="#E8A8BE"/>
+      </g>
+      <rect x="0" y="0" width="390" height="210" fill="url(#p-fade)"/>
+    </svg>
+    <button onclick="goBack()" style="position:absolute;top:14px;right:20px;z-index:3;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.15);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;padding:0 28px;overflow-y:auto;">
+    <div style="display:inline-flex;align-items:center;gap:6px;background:#2E2519;color:#F8F4EE;padding:5px 14px;border-radius:20px;font-size:10px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;margin:18px auto 0;">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      매일 Plus
+    </div>
+    <div style="font-family:'Dongle',sans-serif;font-size:34px;font-weight:700;color:#2E2519;text-align:center;margin-top:8px;line-height:1.1;">Vá mais fundo<br>na Palavra</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;font-style:italic;color:#7A6E5A;text-align:center;margin-top:6px;">Uma vez só. Para sempre.</div>
+    <div style="width:24px;height:1px;background:#C9B99A;margin:16px auto;"></div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;"><div style="width:30px;height:30px;border-radius:10px;background:#D9E4D3;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3E5232" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div><div><div style="font-family:'Dongle',sans-serif;font-size:18px;font-weight:700;color:#2E2519;line-height:1.1;">Biblioteca completa</div><div style="font-size:11px;font-weight:300;color:#7A6E5A;margin-top:1px;line-height:1.35;">Todos os versículos de todas as categorias</div></div></div>
+      <div style="display:flex;align-items:flex-start;gap:12px;"><div style="width:30px;height:30px;border-radius:10px;background:#F2E4C4;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7A5E26" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div><div><div style="font-family:'Dongle',sans-serif;font-size:18px;font-weight:700;color:#2E2519;line-height:1.1;">Cards exclusivos</div><div style="font-size:11px;font-weight:300;color:#7A6E5A;margin-top:1px;line-height:1.35;">Templates premium para Instagram e WhatsApp</div></div></div>
+      <div style="display:flex;align-items:flex-start;gap:12px;"><div style="width:30px;height:30px;border-radius:10px;background:#F2DCE2;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8A3F52" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div><div><div style="font-family:'Dongle',sans-serif;font-size:18px;font-weight:700;color:#2E2519;line-height:1.1;">Áudio em todas as telas</div><div style="font-size:11px;font-weight:300;color:#7A6E5A;margin-top:1px;line-height:1.35;">Ouça qualquer versículo em coreano</div></div></div>
+      <div style="display:flex;align-items:flex-start;gap:12px;"><div style="width:30px;height:30px;border-radius:10px;background:#D6E2E8;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3E5F6B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div><div><div style="font-family:'Dongle',sans-serif;font-size:18px;font-weight:700;color:#2E2519;line-height:1.1;">Favoritos ilimitados</div><div style="font-size:11px;font-weight:300;color:#7A6E5A;margin-top:1px;line-height:1.35;">Crie sua coleção pessoal sem limite</div></div></div>
+    </div>
+    <div style="margin-top:auto;padding:18px 0 max(28px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <div style="font-family:'Dongle',sans-serif;font-size:40px;font-weight:700;color:#2E2519;line-height:1;text-align:center;">R$ 19,90</div>
+      <div style="font-size:11px;color:#B0A08A;font-weight:300;text-align:center;">pagamento único · acesso vitalício · sem assinatura</div>
+      <button style="width:100%;background:#2E2519;color:#F8F4EE;border:none;border-radius:30px;padding:16px;font-family:'Dongle',sans-serif;font-size:22px;font-weight:700;cursor:pointer;">Quero o Plus</button>
+      <button onclick="goBack()" style="font-size:11px;color:#B0A08A;cursor:pointer;background:none;border:none;">continuar com a versão gratuita</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .app -->
+
+<script>
+// ===== NAVIGATION =====
+let history=[];
+function goTo(to, from){
+  const fromEl=document.getElementById(from);
+  const toEl=document.getElementById(to);
+  fromEl.classList.remove('active');
+  fromEl.classList.add('left');
+  toEl.classList.add('active');
+  history.push(from);
+}
+function goBack(){
+  if(!history.length) return;
+  const prev=history.pop();
+  const current=document.querySelector('.screen.active');
+  if(current){ current.classList.remove('active'); current.classList.add('left'); setTimeout(()=>current.classList.remove('left'),300); }
+  const prevEl=document.getElementById(prev);
+  prevEl.classList.remove('left');
+  prevEl.classList.add('active');
+}
+
+// ===== DATE =====
+const d=new Date();
+const months=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const el=document.getElementById('hoje-date');
+if(el) el.textContent=d.getDate()+' de '+months[d.getMonth()];
+
+// ===== WORDS =====
+const words=[
+  {ko:'아무것도',pt:'Nada. Coisa alguma.'},
+  {ko:'염려하지',pt:'Ansiedade — "não fique ansioso".'},
+  {ko:'말고',pt:'Não. Nega a ação anterior.'},
+  {ko:'다만',pt:'Apenas. Somente.'},
+  {ko:'모든',pt:'Todos. Tudo.'},
+  {ko:'일에',pt:'Em tudo. Em toda situação.'},
+  {ko:'기도와',pt:'Oração.'},
+  {ko:'간구로',pt:'Súplica. Pedido do coração.'},
+  {ko:'하나님께',pt:'A Deus. Diante de Deus.'},
+  {ko:'아뢰라',pt:'Apresente. Traga diante de Deus.'},
+];
+
+const vkoEl=document.getElementById('vko');
+words.forEach((w,i)=>{
+  const s=document.createElement('span');
+  s.style.cssText='cursor:pointer;border-radius:2px;padding:0 2px;transition:background 0.15s,color 0.15s;';
+  s.dataset.i=i; s.textContent=w.ko;
+  s.onclick=()=>tapWord(i);
+  vkoEl.appendChild(s);
+  if(i<words.length-1) vkoEl.appendChild(document.createTextNode(' '));
+});
+
+const chipsEl=document.getElementById('chips');
+words.forEach((w,i)=>{
+  const c=document.createElement('button');
+  c.style.cssText="font-family:'Dongle',sans-serif;font-size:18px;font-weight:700;color:#7A6E5A;cursor:pointer;padding:3px 8px;border-bottom:0.5px solid transparent;transition:all 0.12s;background:none;border-left:none;border-right:none;border-top:none;";
+  c.textContent=w.ko; c.onclick=()=>tapWord(i); chipsEl.appendChild(c);
+});
+
+const spans=vkoEl.querySelectorAll('span');
+
+function speakWord(text){
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='ko-KR'; u.rate=0.8;
+  const v=speechSynthesis.getVoices().find(v=>v.lang==='ko-KR'||v.lang==='ko_KR');
+  if(v) u.voice=v;
+  speechSynthesis.speak(u);
+}
+
+function tapWord(i){
+  chipsEl.querySelectorAll('button').forEach((c,ci)=>{
+    c.style.color=ci===i?'#2E2519':'#7A6E5A';
+    c.style.borderBottom=ci===i?'1px solid #2E2519':'0.5px solid transparent';
+  });
+  spans.forEach(s=>{s.style.background='';s.style.color='';});
+  spans[i].style.background='#C9B99A'; spans[i].style.color='#2E2519';
+  const mz=document.getElementById('mzone');
+  mz.innerHTML=`<span style="font-family:'Dongle',sans-serif;font-size:22px;font-weight:700;color:#2E2519;margin-right:8px;">${words[i].ko}</span><svg style="width:12px;height:12px;color:#C9B99A;margin-right:8px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><span style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;font-style:italic;color:#2E2519;">${words[i].pt}</span>`;
+  speakWord(words[i].ko);
+}
+
+// ===== PLAYER =====
+let playing=false,litIdx=-1,utterance=null;
+function togglePlay(){
+  const ico=document.getElementById('playIcon');
+  if(playing){
+    speechSynthesis.cancel(); playing=false;
+    ico.innerHTML='<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+    spans.forEach(s=>{s.style.background='';s.style.color='';});
+    litIdx=-1; return;
+  }
+  const fullText=words.map(w=>w.ko).join(' ');
+  utterance=new SpeechSynthesisUtterance(fullText);
+  utterance.lang='ko-KR'; utterance.rate=0.85;
+  const v=speechSynthesis.getVoices().find(v=>v.lang==='ko-KR'||v.lang==='ko_KR');
+  if(v) utterance.voice=v;
+  playing=true;
+  ico.innerHTML='<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+  utterance.onboundary=(e)=>{
+    if(e.name!=='word') return;
+    let acc=0;
+    for(let i=0;i<words.length;i++){
+      if(e.charIndex<=acc+words[i].ko.length){
+        if(i!==litIdx){
+          spans.forEach(s=>{s.style.background='';s.style.color='';});
+          litIdx=i; spans[i].style.background='#2E2519'; spans[i].style.color='#F8F4EE';
+          const pct=Math.round((i/(words.length-1))*100);
+          document.getElementById('pfill').style.width=pct+'%';
+          document.getElementById('ct').textContent='0:'+String(Math.round((i/(words.length-1))*62)).padStart(2,'0');
+        } break;
+      }
+      acc+=words[i].ko.length+1;
+    }
+  };
+  utterance.onend=()=>{ playing=false; ico.innerHTML='<polygon points="5 3 19 12 5 21 5 3"></polygon>'; spans.forEach(s=>{s.style.background='';s.style.color='';});litIdx=-1; };
+  speechSynthesis.speak(utterance);
+}
+speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+
+// ===== HEART =====
+function toggleHeart(){
+  const h=document.getElementById('heartIcon');
+  const on=h.getAttribute('fill')==='currentColor';
+  h.setAttribute('fill',on?'none':'currentColor');
+  h.style.color=on?'#B0A08A':'#A85C3E';
+}
+
+// ===== CATEGORIES =====
+const cats=[
+  {id:'paz',name:'Paz',desc:'descanse num lugar quieto',color:'#D9E4D3',tc:'#3E5232',
+   icon:'<path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/>',
+   featured:{ko:'평안을 너희에게 끼치노니 곧 나의 평안을 너희에게 주노라',ref:'João 14:27'},
+   list:[{ko:'주께서 심지가 견고한 자를 평강에 평강으로 지키시리니',ref:'Isaías 26:3'},{ko:'너희는 마음에 근심하지 말라',ref:'João 14:1'},{ko:'내가 평안히 눕고 자기도 하리니',ref:'Salmos 4:8'}]},
+  {id:'ansiedade',name:'Ansiedade',desc:'deixe suas preocupações nas mãos d\'Ele',color:'#D6E2E8',tc:'#3E5F6B',
+   icon:'<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M9 11l1.5 1.5L15 8"/>',
+   featured:{ko:'아무것도 염려하지 말고 다만 모든 일에 기도와 간구로',ref:'Filipenses 4:6'},
+   list:[{ko:'너희 염려를 다 주께 맡기라',ref:'1 Pedro 5:7'},{ko:'두려워하지 말라 내가 너와 함께 함이라',ref:'Isaías 41:10'},{ko:'수고하고 무거운 짐 진 자들아 다 내게로 오라',ref:'Mateus 11:28'}]},
+  {id:'gratidao',name:'Gratidão',desc:'cultive um coração grato todos os dias',color:'#F2E4C4',tc:'#7A5E26',
+   icon:'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+   featured:{ko:'범사에 감사하라 이것이 하나님의 뜻이니라',ref:'1 Tessalonicenses 5:18'},
+   list:[{ko:'여호와께 감사하라 그는 선하시며',ref:'Salmos 136:1'},{ko:'감사함으로 그 문에 들어가며',ref:'Salmos 100:4'},{ko:'이 날은 여호와께서 정하신 것이라',ref:'Salmos 118:24'}]},
+  {id:'familia',name:'Família',desc:'Deus abençoa e protege sua família',color:'#E8D7C8',tc:'#7A5333',
+   icon:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+   featured:{ko:'나와 내 집은 여호와를 섬기겠노라',ref:'Josué 24:15'},
+   list:[{ko:'마땅히 행할 길을 아이에게 가르치라',ref:'Provérbios 22:6'},{ko:'네 부모를 공경하라',ref:'Êxodo 20:12'},{ko:'자식들은 여호와의 기업이요',ref:'Salmos 127:3'}]},
+  {id:'oppa',name:'Oppa ♡',desc:'espere com leveza, confie no tempo de Deus',color:'#F2DCE2',tc:'#8A3F52',
+   icon:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.7 1-1a5.5 5.5 0 0 0 0-7.8z"/>',
+   featured:{ko:'네 마음을 다하여 여호와를 신뢰하고 네 명철을 의지하지 말라',ref:'Provérbios 3:5'},
+   list:[{ko:'여호와는 자기를 바라는 자에게 선을 베푸시는도다',ref:'Lamentações 3:25'},{ko:'여호와를 기다리라 강하고 담대하며',ref:'Salmos 27:14'},{ko:'또 여호와를 기뻐하라',ref:'Salmos 37:4'}]},
+];
+
+const catList=document.getElementById('cat-list');
+cats.forEach(cat=>{
+  const c=document.createElement('div');
+  c.style.cssText=`display:flex;align-items:center;gap:14px;padding:16px;border-radius:18px;background:${cat.color};cursor:pointer;`;
+  c.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,0.55);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${cat.tc}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${cat.icon}</svg></div><div style="flex:1;"><div style="font-family:'Dongle',sans-serif;font-size:20px;font-weight:700;color:${cat.tc};">${cat.name}</div><div style="font-size:11px;font-weight:300;color:#7A6E5A;margin-top:1px;">${cat.desc}</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0A08A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`;
+  c.onclick=()=>openCat(cat);
+  catList.appendChild(c);
+});
+
+function openCat(cat){
+  document.getElementById('cat-list').style.display='none';
+  const det=document.getElementById('cat-detail');
+  det.style.display='flex';
+  document.getElementById('det-title').textContent=cat.name;
+  const feat=document.getElementById('det-featured');
+  feat.style.background=cat.color;
+  feat.innerHTML=`<div style="font-size:9px;color:#B0A08A;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;text-align:center;">versículo em destaque</div><div style="font-family:'Dongle',sans-serif;font-size:22px;font-weight:700;color:#2E2519;line-height:1.2;text-align:center;">${cat.featured.ko}</div><div style="font-size:10px;color:#B0A08A;margin-top:10px;text-align:center;">${cat.featured.ref}</div><div style="display:flex;justify-content:center;gap:10px;margin-top:12px;padding-top:10px;border-top:0.5px solid rgba(0,0,0,0.07);"><button onclick="speakWord('${cat.featured.ko.split(' ').slice(0,3).join(' ')}')" style="display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.6);border:0.5px solid rgba(0,0,0,0.08);font-size:11px;color:#7A6E5A;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>ouvir</button><button onclick="goTo('plus','versiculos')" style="display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.6);border:0.5px solid rgba(0,0,0,0.08);font-size:11px;color:#7A6E5A;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>compartilhar</button></div>`;
+  const dl=document.getElementById('det-list');
+  dl.innerHTML='';
+  cat.list.forEach(v=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:0.5px solid #EDE6D6;';
+    row.innerHTML=`<div style="flex:1;font-family:'Dongle',sans-serif;font-size:17px;font-weight:700;color:#2E2519;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.ko}</div><div style="font-size:10px;color:#B0A08A;flex-shrink:0;">${v.ref}</div>`;
+    dl.appendChild(row);
+  });
+}
+
+function closeCat(){
+  document.getElementById('cat-detail').style.display='none';
+  document.getElementById('cat-list').style.display='flex';
+  document.getElementById('cat-list').style.flexDirection='column';
+}
+</script>
+</body>
+</html>
